@@ -1,7 +1,8 @@
+from imp import reload
 from typing import List
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
+import uvicorn
 from sql import crud, database, models, schemas
 from sql.database import db_state_default
 
@@ -39,7 +40,7 @@ def get_db(db_state=Depends(reset_db_state)):
 
 @app.get("/")
 def read_root():
-    return "Hello World"
+    return "Hello World!"
 
 
 @app.get("/record/{record_id}",
@@ -66,3 +67,7 @@ def read_records_by_scale_id(scale_id: str):
           dependencies=[Depends(get_db)])
 def create_record(record: schemas.ScaleRecordCreate):
     return crud.create_scale_record(record=record)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
