@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import FastAPI, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from sql import crud, database, models, schemas
 from sql.database import db_state_default
@@ -11,7 +11,14 @@ database.db.close()
 
 app = FastAPI()
 ''' 允许跨域访问 '''
-headers = {"Access-Control-Allow-Origin": "*"}
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 sleep_time = 3
 
@@ -32,7 +39,7 @@ def get_db(db_state=Depends(reset_db_state)):
 
 @app.get("/")
 def read_root():
-    return JSONResponse(content="Hello World", headers=headers)
+    return "Hello World"
 
 
 @app.get("/record/{record_id}",
